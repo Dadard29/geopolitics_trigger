@@ -15,7 +15,7 @@ build:
     - echo "registering with $REGISTRY_USERNAME $REGISTRY_PASSWORD"
     - echo $REGISTRY_PASSWORD | docker login -u $REGISTRY_USERNAME --password-stdin registry.gitlab.com
     - echo version set to $CI_COMMIT_TAG
-    - docker build -t $IMAGE_NAME --build-arg CONSUMER_KEY=$CONSUMER_KEY --build-arg CONSUMER_SECRET=$CONSUMER_SECRET --build-arg ACCESS_TOKEN=$ACCESS_TOKEN --build-arg ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET --build-arg SUB_TOKEN=$SUB_TOKEN --build-arg GEOP_HOST=$GEOP_HOST .
+    - docker build -t $IMAGE_NAME --build-arg VERSION=$CI_COMMIT_TAG --build-arg CONSUMER_KEY=$CONSUMER_KEY --build-arg CONSUMER_SECRET=$CONSUMER_SECRET --build-arg ACCESS_TOKEN=$ACCESS_TOKEN --build-arg ACCESS_TOKEN_SECRET=$ACCESS_TOKEN_SECRET --build-arg SUB_TOKEN=$SUB_TOKEN --build-arg GEOP_HOST=$GEOP_HOST .
     - docker push $IMAGE_NAME
 
 deploy:
