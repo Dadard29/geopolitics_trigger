@@ -37,7 +37,7 @@ class MyStreamListener(tweepy.StreamListener):
                 if tweet.truncated:
 
                     urls = tweet.extended_tweet['entities']['urls']
-                    if len(urls) > 1:
+                    if len(urls) > 0:
                         url_obj = tweet.extended_tweet['entities']['urls'][0]
                         display_link = url_obj['display_url']
 
