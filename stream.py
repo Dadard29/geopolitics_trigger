@@ -1,3 +1,6 @@
+from queue import Queue
+from threading import Thread
+
 import tweepy
 
 from datetime import datetime
@@ -25,10 +28,17 @@ def send_to_geoplitics(article_link, hashtags, brief):
 
 
 class MyStreamListener(tweepy.StreamListener):
-    def __init__(self, api):
+    def __init__(self, api, q=Queue()):
         super().__init__(api)
         self.api = api
         self.me = api.me()
+
+        self.q = q
+        num_worker_threads = 4
+        for i in range(num_worker_threads):
+            t = Thread(target=self.do_stuff)
+            t.daemon = True
+            t.start()
 
     def on_status(self, tweet):
         try:
@@ -62,3 +72,11 @@ class MyStreamListener(tweepy.StreamListener):
         log("Error detected")
         log(status)
 
+    def do_stuff(self):
+        while True:
+            self.q.get()
+            self.q.task_done()
+
+    def on_exception(self, exception):
+        log("Error detected")
+        log(exception)
