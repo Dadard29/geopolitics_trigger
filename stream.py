@@ -45,24 +45,29 @@ class MyStreamListener(tweepy.StreamListener):
             log(f"{tweet.user.name}\t tweeted:  {tweet.text}")
             if tweet.user.name == "Le Monde":
                 if tweet.truncated:
-
                     urls = tweet.extended_tweet['entities']['urls']
-                    if len(urls) > 0:
-                        url_obj = tweet.extended_tweet['entities']['urls'][0]
-                        display_link = url_obj['display_url']
+                    hashtags = [h['text'] for h in tweet.extended_tweet['entities']['hashtags']]
+                    tweet_text = tweet.extended_tweet['full_text']
 
-                        # check if is international
-                        if display_link.startswith("lemonde.fr/international"):
-                            article_link = url_obj['expanded_url']
-                            hashtags = [h['text'] for h in tweet.extended_tweet['entities']['hashtags']]
-                            tweet_text = tweet.extended_tweet['full_text']
+                else:
+                    urls = tweet.entities['urls']
+                    hashtags = [h['text'] for h in tweet.entities['hashtags']]
+                    tweet_text = tweet.text
 
-                            # send to geop
-                            status, msg = send_to_geoplitics(article_link, hashtags, tweet_text)
-                            if status:
-                                log("sent")
-                            else:
-                                log(f"failed to send: {msg}")
+                if len(urls) > 0:
+                    url_obj = urls[0]
+                    display_link = url_obj['display_url']
+
+                    # check if is international
+                    if display_link.startswith("lemonde.fr/international"):
+                        article_link = url_obj['expanded_url']
+
+                        # send to geop
+                        status, msg = send_to_geoplitics(article_link, hashtags, tweet_text)
+                        if status:
+                            log("sent")
+                        else:
+                            log(f"failed to send: {msg}")
 
         except Exception as e:
             log("failed to process tweet")
