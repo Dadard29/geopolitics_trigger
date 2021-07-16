@@ -12,14 +12,18 @@ def main():
     api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
     log("connected to api")
 
-    tweets_listener = MyStreamListener(api)
-    stream = tweepy.Stream(api.auth, tweets_listener)
+    while True:
+        try:
+            tweets_listener = MyStreamListener(api)
+            stream = tweepy.Stream(api.auth, tweets_listener)
 
-    leMondeId = "24744541"
-    stream.filter(follow=[leMondeId])
+            leMondeId = "24744541"
+            stream.filter(follow=[leMondeId])
 
-    log("streaming...")
-    stream.disconnect()
+            log("streaming...")
+
+        except Exception as e:
+            log("restarting stream...")
 
 
 if __name__ == "__main__":
